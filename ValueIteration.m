@@ -31,6 +31,20 @@ function [ J_opt, u_opt_ind ] = ValueIteration( P, G )
 %       	inputs for each element of the state space.
 
 % put your code here
+J = zeros(1,MN);
+	
+	function [u_k_1] = updateU(u_k)
+		
 
+	function [J_out] = getCost(u_k)
+		J_prev = J;
+		J_out = zeros(1,MN);
+		for i=1:MN
+			J_out(i) = G(i,u_k(i));
+			for j=1:MN
+				J_out(i) = J_out(i) + P(i,j,u_k(i))*J_prev(i);
+			end
+		end
+	end
 end
 

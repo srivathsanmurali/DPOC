@@ -58,7 +58,7 @@ L   = size(controlSpace,1);
 p_pc= 1/L; %probability of each control space
 p_pc_norm = 0;
 P = [];
-
+target = targetCell(2) + ((targetCell(1)-1)*M);
 MoveMatrix = getMoveMatrix();
 
 P = zeros(MN,MN,L);
@@ -72,8 +72,8 @@ for i=1:MN
         
         for s=1:S
             % control movement % disturbance movement
-            x_c = controlSpace(l,2) + disturbanceSpace(s,2);
-            y_c = controlSpace(l,1) + disturbanceSpace(s,1);
+            x_c = controlSpace(l,1) + disturbanceSpace(s,1);
+            y_c = controlSpace(l,2) + disturbanceSpace(s,2);
             uw = y_c + (x_c*M);
             %dynamics of the system
             x = i + uw;
@@ -89,6 +89,8 @@ for i=1:MN
         end
     end
 end
+P(target,:,:) = 0;
+P(target,target,:) = 1;
 %% Get Possible Moves
     function [L_new,p_pc] = getPossibleMoves(i)
         L_new = zeros(L,1);

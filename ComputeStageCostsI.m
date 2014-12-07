@@ -57,6 +57,7 @@ MN  = size(stateSpace, 1);
 M   = mazeSize(1); %Vertical
 N   = mazeSize(2); %Horizontal
 L   = size(controlSpace,1);
+target = targetCell(2) + ((targetCell(1)-1)*M);
 
 MoveMatrix = getMoveMatrix();
 controlCost = sum(abs(controlSpace),2);
@@ -72,6 +73,7 @@ for i=1:MN
         G(i,l) = controlCost(l);
     end
 end
+G(target,:) = 0;
 %% Get Possible Moves
     function [L_new] = getPossibleMoves(i)
         L_new = zeros(L,1);
