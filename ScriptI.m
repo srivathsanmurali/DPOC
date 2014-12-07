@@ -21,19 +21,20 @@
 
 %% clear workspace and command window
 clear all;
-close all;
+%close all;
 clc;
 
 %% define problem size and generate maze
-%shouldGenerateMaze = false;
-shouldGenerateMaze = true;
+shouldGenerateMaze = false;
+%shouldGenerateMaze = true;
 if shouldGenerateMaze
-	mazeSize = [ 4, 4 ];
+	mazeSize = [ 3, 3 ];
 	[ walls, targetCell, ~, ~ ] = GenerateMaze( mazeSize( 1 ), ...
         mazeSize( 2 ), false );
     % This generates a new random maze.
 else
-    load( 'pregeneratedMazeI.mat' );
+    %load( 'pregeneratedMazeI.mat' );
+    load( 'lastmatrix.mat' );
     % In order to save time we can just load a pre-generated maze.
 end
 PlotMaze( 1, mazeSize, walls, targetCell, [], [] );
@@ -74,8 +75,8 @@ P = ComputeTransitionProbabilitiesI( stateSpace, controlSpace, ...
 % transition  probabilities to all other states j can be set to zero.
 
 % %% compute stage costs
-% G = ComputeStageCostsI( stateSpace, controlSpace, disturbanceSpace, ...
-%     mazeSize, walls, targetCell );
+G = ComputeStageCostsI( stateSpace, controlSpace, disturbanceSpace, ...
+    mazeSize, walls, targetCell );
 % % This computes the stage costs for all states in the state space for all
 % % attainable control inputs.
 % % The stage cost matrix has the dimension (MN x L), i.e. the entry G(i, l)
