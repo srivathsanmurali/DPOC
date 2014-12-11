@@ -31,20 +31,46 @@ function [ J_opt, u_opt_ind ] = ValueIteration( P, G )
 %       	inputs for each element of the state space.
 
 % put your code here
-J = zeros(1,MN);
-	
-	function [u_k_1] = updateU(u_k)
-		
+%constants
+MN = size(G,1);
+L  = size(G,2);
 
-	function [J_out] = getCost(u_k)
-		J_prev = J;
-		J_out = zeros(1,MN);
-		for i=1:MN
-			J_out(i) = G(i,u_k(i));
+J_opt = max(G,[],2);
+u_opt_ind = ones(1,MN);
+Jk = max(G,[],2)';
+Jk1 = zeros(1,MN);
+is_done = 0;
+
+iter = 0;
+while (is_done == 0)
+	iter = iter + 1
+	u_old = u_opt_ind;
+	for i=1:MN
+
+		tempJ = 0;
+		Jk1(i) = 0;
+		for u=1:L
+			tempJ = G(i,u);
 			for j=1:MN
-				J_out(i) = J_out(i) + P(i,j,u_k(i))*J_prev(i);
+				tempJ = tempJ + P(i,j,u)*Jk(j);
+			end
+			% display([iter,i,u,tempJ])
+			if(i==8 && P(8,9,u) ~= 0)
+				display([8,9,u,P(8,9,u),Jk(9),tempJ])
+			end
+			if(tempJ>Jk1(i))
+				Jk1(i) = tempJ;
+				u_opt_ind(i) = u;
+				%display(1)
 			end
 		end
 	end
+	if((Jk - Jk1) < 0.00001)
+		J_opt = Jk1;
+		is_done = 1;
+	end
+	Jk = Jk1;
+end
+display(iter, 'total iterations')
 end
 

@@ -57,20 +57,25 @@ MN  = size(stateSpace, 1);
 M   = mazeSize(1); %Vertical
 N   = mazeSize(2); %Horizontal
 L   = size(controlSpace,1);
-target = targetCell(2) + ((targetCell(1)-1)*M);
+target = targetCell(2) + ((targetCell(1)-1)*M)
 
 MoveMatrix = getMoveMatrix();
 controlCost = sum(abs(controlSpace),2);
-G = zeros(MN,L);
+G = ones(MN,L);
 % Need to add the changes caused due to walls.
 for i=1:MN
     [controlSpaceNew] = getPossibleMoves(i);
     for l=1:L
         if(controlSpaceNew(l) == 0)
-            continue;
+            G(i,l) = -10;
+        else
+        	G(i,l) = controlCost(l);
+        	x = i + controlSpace(l,2) + (controlSpace(l,1) * M);
+        	if(x == target)
+        		display([i,l]);
+        		G(i,l) = 100;
+        	end
         end
-        
-        G(i,l) = controlCost(l);
     end
 end
 G(target,:) = 0;
@@ -129,12 +134,13 @@ G(target,:) = 0;
     function [MM] = getMoveMatrix()
         MM = zeros(MN,MN);
         %borders
-        bdrs = [1];%,M+1,-M+1]
+        bdrs = [1,2];%,M+1,-M+1]
         for i=M:M:MN
             for j=1:length(bdrs)
                 x = i + bdrs(j);
                 if(x>=1 && x<=MN)
                     MM(i,x) = 1;
+                    MM(i-1,x) = 1;
                 end
             end
         end
@@ -143,6 +149,7 @@ G(target,:) = 0;
                 x = i - bdrs(j);
                 if(x>=1 && x<=MN)
                     MM(i,x) = 1;
+                    MM(i+1,x) = 1;
                 end
             end
         end

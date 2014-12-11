@@ -60,11 +60,14 @@ p_pc_norm = 0;
 P = [];
 target = targetCell(2) + ((targetCell(1)-1)*M);
 MoveMatrix = getMoveMatrix();
-
+% display(MoveMatrix(9,:),'MM(9,:)')
 P = zeros(MN,MN,L);
 % Need to add the changes caused due to walls.
 for i=1:MN
     [controlSpaceNew,p_pc] = getPossibleMoves(i);
+    if(i==9)
+        display(controlSpaceNew)
+    end
     for l=1:L
         if(controlSpaceNew(l) == 0)
             continue;
@@ -77,14 +80,13 @@ for i=1:MN
             uw = y_c + (x_c*M);
             %dynamics of the system
             x = i + uw;
-            if( x>MN || x<1)% || MoveMatrix(i,x) == 1)
-                continue;
-                % if this increases the probability of possible 
-                % control spaces then add to them here
-            end
-            p_pc_norm = p_pc_norm +1;
+            if( x<=MN && x>=1 && MoveMatrix(i,x) == 0)
 
-            P(i,x,l) = P(i,x,l) + p_pc*disturbanceSpace(s,3);
+                P(i,x,l) = P(i,x,l) + p_pc*disturbanceSpace(s,3);
+                if(i==9 && x==19)
+                    display([i,x,l,P(i,x,l)])
+                end
+            end
             
         end
     end
@@ -154,7 +156,9 @@ P(target,target,:) = 1;
                 x = i + bdrs(j);
                 if(x>=1 && x<=MN)
                     MM(i,x) = 1;
+                    MM(i-1,x) = 1;
                 end
+
             end
         end
         for i=1:M:MN
@@ -162,6 +166,7 @@ P(target,target,:) = 1;
                 x = i - bdrs(j);
                 if(x>=1 && x<=MN)
                     MM(i,x) = 1;
+                    MM(i+1,x) = 1;
                 end
             end
         end
