@@ -59,8 +59,11 @@ p_pc= 1/L; %probability of each control space
 p_pc_norm = 0;
 P = [];
 target = targetCell(2) + ((targetCell(1)-1)*M);
-Walls = getWalls()
-MoveMatrix = getMoveMatrix()
+Walls = getWalls();
+% Wall matrix
+%     - 1 when allowed to move to the node
+%     - 0 when not allowed to move to the node
+MoveMatrix = getMoveMatrix();
 % Move matrix
 %     - 1 when allowed to move to the node
 %     - 0 when not allowed
@@ -68,37 +71,37 @@ MoveMatrix = getMoveMatrix()
 % display(MoveMatrix(9,:),'MM(9,:)')
 P = zeros(MN,MN,L);
 
-% % Need to add the changes caused due to walls.
-% for i=1:MN
-%     [controlSpaceNew,p_pc] = getPossibleMoves(i);
-%     if(i==9)
-%         display(controlSpaceNew)
-%     end
-%     for l=1:L
-%         if(controlSpaceNew(l) == 0)
-%             continue;
-%         end
-        
-%         for s=1:S
-%             % control movement % disturbance movement
-%             x_c = controlSpace(l,1) + disturbanceSpace(s,1);
-%             y_c = controlSpace(l,2) + disturbanceSpace(s,2);
-%             uw = y_c + (x_c*M);
-%             %dynamics of the system
-%             x = i + uw;
-%             if( x<=MN && x>=1 && MoveMatrix(i,x) == 0)
-
-%                 P(i,x,l) = P(i,x,l) + p_pc*disturbanceSpace(s,3);
-%                 if(i==9 && x==19)
-%                     display([i,x,l,P(i,x,l)])
-%                 end
-%             end
-            
-%         end
-%     end
-% end
-% P(target,:,:) = 0;
-% P(target,target,:) = 1;
+% Need to add the changes caused due to walls.
+for i=1:MN
+    [controlSpaceNew,p_pc] = getPossibleMoves(i);
+    % Possible Moves
+    %     1 - If allowed
+    %     0 - Not allowed
+    for l=1:L
+        if(controlSpaceNew(l) == 0)
+            continue;
+        end
+        % control movement % disturbance movement
+        x_c = controlSpace(l,1);
+        y_c = controlSpace(l,2);
+        u = y_c + (x_c*M);
+        %dynamics of the system
+        x = i + u;
+        if(x<=MN && x>= 1 && MoveMatrix(i,x) == 1)
+            P(i,x,l) = P(i,x,l) + p_pc;
+            for s=1:S
+                x_d = disturbanceSpace(s,1);
+                y_d = disturbanceSpace(s,2);
+                d = y_c + (x_c*M);
+                if((x+d) <= MN && (x+d) >= 1 && MoveMatrix(i,(x+d)) == 1)
+                    P(i,(x+d)) = P(i,(x+d)) * disturbanceSpace(s,3);
+                end
+            end
+        end
+    end
+end
+P(target,:,:) = 0;
+P(target,target,:) = 1;
 %% Get Possible Moves
     function [L_new,p_pc] = getPossibleMoves(i)
         L_new = zeros(L,1);
@@ -108,46 +111,9 @@ P = zeros(MN,MN,L);
         for ll=1:L
             u = controlSpace(ll,2) + (controlSpace(ll,1) * M);
             x = i + u;
-            if(x<=MN && x>=1 && MoveMatrix(i,x) == 0)            
+            if(x<=MN && x>=1 && MoveMatrix(i,x) == 1)            
                 L_new(ll) = 1;
             end
-        end
-        diagn = [M+1,M-1,-M+1,-M-1];
-        diagnL = [12,10,4,2];
-        dnodes = [M,1;M,-1;-M,1;-M,-1];
-        for dg=1:4
-            d = i + diagn(dg);
-            n1 = i + dnodes(dg,1);
-            n2 = i + dnodes(dg,2);
-
-            if(d<1 || d>MN || n1<1 || n1>MN || n2<1 || n2>MN)
-                L_new(diagnL(dg)) = 0;
-            else
-                if(MoveMatrix(i,n1) == 0 && MoveMatrix(i,n2) == 0 ...
-                    && MoveMatrix(d,n1) == 0 && MoveMatrix(d,n2) == 0 )
-                    L_new(diagnL(dg)) = 1;
-                else
-                    L_new(diagnL(dg)) = 0;              
-                end
-            end
-
-        end     
-
-        if(y==0)
-            L_new(4) = 0;
-            L_new(12) = 0;
-        end
-        if(y==1)
-            L_new(10) = 0;
-            L_new(2) = 0; 
-        end
-        if(x==1)
-            L_new(2) = 0;
-            L_new(4) = 0;
-        end
-        if(x==M-1)
-            L_new(10) = 0;
-            L_new(12) = 0;
         end
         p_pc = (1/length(find(L_new==1)));
         
@@ -159,10 +125,37 @@ P = zeros(MN,MN,L);
             for u= 1:L
                 x_c = controlSpace(u,1);
                 y_c = controlSpace(u,2);
+                d_c = x_c * y_c;
+
+                x_i = i/M;
+                y_i = mod(i,M);
+
                 u = y_c + (x_c*M);
                 x = i + u;
-                if(x>=1 && x<=MN && Walls(i,x) == 1)
-                    MM(i,x) = 1;
+                if(x>=1 && x<=MN)
+                    if(d_c == 0 && Walls(i,x) == 1)
+                        MM(i,x) = 1;
+                    else
+                        if(y_i == 0 && y_c == 1)
+                            MM(i,x) = 0;
+                        elseif(y_i == 1 && y_c == -1)
+                            MM(i,x) = 0;
+                        elseif(x_i == 1 && x_c == -1)
+                            MM(i,x) = 0;
+                        elseif(x_i == M-1 && x_c == 1)
+                            MM(i,x) = 0;
+                        else
+                            n1 = i + y_c;
+                            n2 = i + (x_c*M);
+                            if(Walls(i,n1)== 1 && Walls(i,n2) == 1 ...
+                                && Walls(x,n1) == 1 && Walls(x,n2) == 1)
+                                MM(i,x) = 1
+                            else
+                                MM(i,x) = 0;
+                            end
+                        end
+                    end
+
                 end
             end
         end
