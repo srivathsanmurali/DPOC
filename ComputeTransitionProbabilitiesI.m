@@ -88,12 +88,19 @@ for i=1:MN
         %dynamics of the system
         x = i + u;
         if(x<=MN && x>= 1 && MoveMatrix(i,x) == 1)
+            if(i == 12 && x == 14)
+                display([i,x,u,MoveMatrix(i,x)],'here1');
+            end
+
             P(i,x,l) = P(i,x,l) + p_pc;
             for s=1:S
                 x_d = disturbanceSpace(s,1);
                 y_d = disturbanceSpace(s,2);
                 d = y_c + (x_c*M);
-                if((x+d) <= MN && (x+d) >= 1 && MoveMatrix(i,(x+d)) == 1)
+                if((x+d) <= MN && (x+d) >= 1 && MoveMatrix(x,(x+d)) == 1)
+                    if((x+d) == 14 && x == 13)
+                        display([i,x,x+d,u,MoveMatrix(x,(x+d))],'here2');
+                    end
                     P(i,(x+d)) = P(i,(x+d)) * disturbanceSpace(s,3);
                 end
             end
@@ -134,6 +141,7 @@ P(target,target,:) = 1;
                 x = i + u;
                 if(x>=1 && x<=MN)
                     if(d_c == 0 && Walls(i,x) == 1)
+
                         MM(i,x) = 1;
                     else
                         if(y_i == 0 && y_c == 1)
@@ -142,13 +150,14 @@ P(target,target,:) = 1;
                             MM(i,x) = 0;
                         elseif(x_i == 1 && x_c == -1)
                             MM(i,x) = 0;
-                        elseif(x_i == M-1 && x_c == 1)
+                        elseif(x_i == N-1 && x_c == 1)
                             MM(i,x) = 0;
                         else
                             n1 = i + y_c;
                             n2 = i + (x_c*M);
                             if(Walls(i,n1)== 1 && Walls(i,n2) == 1 ...
                                 && Walls(x,n1) == 1 && Walls(x,n2) == 1)
+
                                 MM(i,x) = 1
                             else
                                 MM(i,x) = 0;
@@ -167,13 +176,15 @@ P(target,target,:) = 1;
     function [Walls] = getWalls()
         Walls = ones(MN,MN);
         %borders
-        bdrs = [1];%,M+1,-M+1]
+        bdrs = [1];
         for i=M:M:MN
             for j=1:length(bdrs)
                 x = i + bdrs(j);
                 if(x>=1 && x<=MN)
+                    
                     Walls(i,x) = 0;
                     Walls(i-1,x) = 0;
+                    Walls(i,x+1) = 0;
                 end
 
             end
@@ -184,6 +195,7 @@ P(target,target,:) = 1;
                 if(x>=1 && x<=MN)
                     Walls(i,x) = 0;
                     Walls(i+1,x) = 0;
+                    Walls(i,x-1) = 0;
                 end
             end
         end
@@ -199,6 +211,7 @@ P(target,target,:) = 1;
                 to      = max(to_y,from_y) + ((from_x)*M);
                 while (to<=MN)
                     while (from>=1)
+
                         Walls(from,to) = 0;
                         Walls(to,from) = 0;
                         from = from - M;
@@ -214,6 +227,9 @@ P(target,target,:) = 1;
                 from_stop = ( floor(from/M) * M) + 1;
                 while (to<=to_stop)
                     while (from>=from_stop)
+                        if((from==12 && to == 14) || (from == 14 && to == 12))
+                            display('here is your problem');
+                        end
                         Walls(from,to) = 0;
                         Walls(to,from) = 0;
                         from = from - 1;

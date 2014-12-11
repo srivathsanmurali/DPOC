@@ -59,28 +59,40 @@ N   = mazeSize(2); %Horizontal
 L   = size(controlSpace,1);
 target = targetCell(2) + ((targetCell(1)-1)*M)
 
+Walls = getWalls();
+% Wall matrix
+%     - 1 when allowed to move to the node
+%     - 0 when not allowed to move to the node
 MoveMatrix = getMoveMatrix();
+% Move matrix
+%     - 1 when allowed to move to the node
+%     - 0 when not allowed
+
 controlCost = sum(abs(controlSpace),2);
-G = ones(MN,L);
+G = zeros(MN,L);
 % Need to add the changes caused due to walls.
 for i=1:MN
-    [controlSpaceNew] = getPossibleMoves(i);
+    [controlSpaceNew,p_pc] = getPossibleMoves(i);
     for l=1:L
+        x_c = controlSpace(l,1);
+        y_c = controlSpace(l,2);
+        c = y_c + (x_c * M);
+        
         if(controlSpaceNew(l) == 0)
-            G(i,l) = -10;
+            G(i,l) = -1;
         else
-        	G(i,l) = controlCost(l);
-        	x = i + controlSpace(l,2) + (controlSpace(l,1) * M);
-        	if(x == target)
-        		display([i,l]);
+            G(i,l) = 1 * (c~=0);
+        	x = i + c;
+        	if(x == target)        		
         		G(i,l) = 100;
         	end
         end
     end
 end
 G(target,:) = 0;
+
 %% Get Possible Moves
-    function [L_new] = getPossibleMoves(i)
+    function [L_new,p_pc] = getPossibleMoves(i)
         L_new = zeros(L,1);
         x = i/M;
         y = mod(i,M);
@@ -88,68 +100,82 @@ G(target,:) = 0;
         for ll=1:L
             u = controlSpace(ll,2) + (controlSpace(ll,1) * M);
             x = i + u;
-            if(x<=MN && x>=1 && MoveMatrix(i,x) == 0)            
+            if(x<=MN && x>=1 && MoveMatrix(i,x) == 1)            
                 L_new(ll) = 1;
             end
         end
-		diagn = [M+1,M-1,-M+1,-M-1];
-		diagnL = [12,10,4,2];
-		dnodes = [M,1;M,-1;-M,1;-M,-1];
-		for dg=1:4
-			d = i + diagn(dg);
-			n1 = i + dnodes(dg,1);
-			n2 = i + dnodes(dg,2);
-
-			if(d<1 || d>MN || n1<1 || n1>MN || n2<1 || n2>MN)
-				L_new(diagnL(dg)) = 0;
-			else
-				if(MoveMatrix(i,n1) == 0 && MoveMatrix(i,n2) == 0 ...
-					&& MoveMatrix(d,n1) == 0 && MoveMatrix(d,n2) == 0 )
-					L_new(diagnL(dg)) = 1;
-				else
-					L_new(diagnL(dg)) = 0;				
-				end
-			end
-
-		end		
-
-        if(y==0)
-            L_new(4) = 0;
-            L_new(12) = 0;
-        end
-        if(y==1)
-            L_new(10) = 0;
-            L_new(2) = 0; 
-        end
-        if(x==1)
-            L_new(2) = 0;
-            L_new(4) = 0;
-        end
-        if(x==M-1)
-            L_new(10) = 0;
-            L_new(12) = 0;
-        end
+        p_pc = (1/length(find(L_new==1)));
+        
     end
 
     function [MM] = getMoveMatrix()
         MM = zeros(MN,MN);
+        for i = 1:MN
+            for u= 1:L
+                x_c = controlSpace(u,1);
+                y_c = controlSpace(u,2);
+                d_c = x_c * y_c;
+
+                x_i = i/M;
+                y_i = mod(i,M);
+
+                u = y_c + (x_c*M);
+                x = i + u;
+                if(x>=1 && x<=MN)
+                    if(d_c == 0 && Walls(i,x) == 1)
+                        MM(i,x) = 1;
+                    else
+                        if(y_i == 0 && y_c == 1)
+                            MM(i,x) = 0;
+                        elseif(y_i == 1 && y_c == -1)
+                            MM(i,x) = 0;
+                        elseif(x_i == 1 && x_c == -1)
+                            MM(i,x) = 0;
+                        elseif(x_i == M-1 && x_c == 1)
+                            MM(i,x) = 0;
+                        else
+                            n1 = i + y_c;
+                            n2 = i + (x_c*M);
+                            if(Walls(i,n1)== 1 && Walls(i,n2) == 1 ...
+                                && Walls(x,n1) == 1 && Walls(x,n2) == 1)
+                                MM(i,x) = 1
+
+                            else
+                                MM(i,x) = 0;
+                            end
+                        end
+                    end
+
+                end
+            end
+        end
+    end
+
+
+
+
+    function [Walls] = getWalls()
+        Walls = ones(MN,MN);
         %borders
-        bdrs = [1,2];%,M+1,-M+1]
+        bdrs = [1];%,M+1,-M+1]
         for i=M:M:MN
             for j=1:length(bdrs)
                 x = i + bdrs(j);
                 if(x>=1 && x<=MN)
-                    MM(i,x) = 1;
-                    MM(i-1,x) = 1;
+                    Walls(i,x) = 0;
+                    Walls(i-1,x) = 0;
+                    Walls(i,x+1) = 0;
                 end
+
             end
         end
         for i=1:M:MN
             for j=1:length(bdrs)
                 x = i - bdrs(j);
                 if(x>=1 && x<=MN)
-                    MM(i,x) = 1;
-                    MM(i+1,x) = 1;
+                    Walls(i,x) = 0;
+                    Walls(i+1,x) = 0;
+                    Walls(i,x-1) = 0;
                 end
             end
         end
@@ -165,8 +191,8 @@ G(target,:) = 0;
                 to      = max(to_y,from_y) + ((from_x)*M);
                 while (to<=MN)
                     while (from>=1)
-                        MM(from,to) = 1;
-                        MM(to,from) = 1;
+                        Walls(from,to) = 0;
+                        Walls(to,from) = 0;
                         from = from - M;
                     end
                     from    = max(to_y,from_y) + ((from_x-1)*M);
@@ -180,8 +206,8 @@ G(target,:) = 0;
                 from_stop = ( floor(from/M) * M) + 1;
                 while (to<=to_stop)
                     while (from>=from_stop)
-                        MM(from,to) = 1;
-                        MM(to,from) = 1;
+                        Walls(from,to) = 0;
+                        Walls(to,from) = 0;
                         from = from - 1;
                     end
                     from    = (from_y)  + (min(to_x,from_x)*M);
@@ -190,6 +216,7 @@ G(target,:) = 0;
             end
             
         end 
+
     end
 end
 

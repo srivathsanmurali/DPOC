@@ -33,9 +33,9 @@ if shouldGenerateMaze
         mazeSize( 2 ), false );
     % This generates a new random maze.
 else
-    %load( 'pregeneratedMazeI.mat' );
+    load( 'pregeneratedMazeI.mat' );
     %load( 'lastmatrix.mat' );
-    load('44Maze.mat');
+    % load('44Maze.mat');
     % In order to save time we can just load a pre-generated maze.
 end
 PlotMaze( 1, mazeSize, walls, targetCell, [], [] );
@@ -76,8 +76,8 @@ P = ComputeTransitionProbabilitiesI( stateSpace, controlSpace, ...
 % transition  probabilities to all other states j can be set to zero.
 
 % %% compute stage costs
-% G = ComputeStageCostsI( stateSpace, controlSpace, disturbanceSpace, ...
-%     mazeSize, walls, targetCell );
+G = ComputeStageCostsI( stateSpace, controlSpace, disturbanceSpace, ...
+    mazeSize, walls, targetCell );
 % % This computes the stage costs for all states in the state space for all
 % % attainable control inputs.
 % % The stage cost matrix has the dimension (MN x L), i.e. the entry G(i, l)
@@ -86,7 +86,7 @@ P = ComputeTransitionProbabilitiesI( stateSpace, controlSpace, ...
 % % cost can be set to infinity.
 % 
 % %% solve stochastic shortest path problem
- % [ J_opt_vi, u_opt_ind_vi ] = ValueIteration( P, G );
+ [ J_opt_vi, u_opt_ind_vi ] = ValueIteration( P, G );
 % [ J_opt_pi, u_opt_ind_pi ] = PolicyIteration( P, G );
 % [ J_opt_lp, u_opt_ind_lp ] = LinearProgramming( P, G );
 % % Here we solve the stochastic shortest path problem by Value Iteration,
@@ -94,10 +94,10 @@ P = ComputeTransitionProbabilitiesI( stateSpace, controlSpace, ...
 
 %% plot results
 
-% figH = PlotMaze( 2, mazeSize, walls, targetCell, [], [], stateSpace, ...
-%     controlSpace, J_opt_vi, u_opt_ind_vi );
-% figure(figH);
-% title(strcat('Value iteration (width=', num2str(mazeSize(1)), ', height=', num2str(mazeSize(2)), ')'));
+figH = PlotMaze( 2, mazeSize, walls, targetCell, [], [], stateSpace, ...
+    controlSpace, J_opt_vi, u_opt_ind_vi );
+figure(figH);
+title(strcat('Value iteration (width=', num2str(mazeSize(1)), ', height=', num2str(mazeSize(2)), ')'));
 % 
 % figH = PlotMaze( 3, mazeSize, walls, targetCell, [], [], stateSpace, ...
 %     controlSpace, J_opt_pi, u_opt_ind_pi );

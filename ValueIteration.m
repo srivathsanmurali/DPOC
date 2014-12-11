@@ -37,7 +37,8 @@ L  = size(G,2);
 
 J_opt = max(G,[],2);
 u_opt_ind = ones(1,MN);
-Jk = max(G,[],2)';
+% Jk = max(G,[],2)';
+Jk = zeros(1,MN);
 Jk1 = zeros(1,MN);
 is_done = 0;
 
@@ -46,7 +47,6 @@ while (is_done == 0)
 	iter = iter + 1
 	u_old = u_opt_ind;
 	for i=1:MN
-
 		tempJ = 0;
 		Jk1(i) = 0;
 		for u=1:L
@@ -54,18 +54,16 @@ while (is_done == 0)
 			for j=1:MN
 				tempJ = tempJ + P(i,j,u)*Jk(j);
 			end
-			% display([iter,i,u,tempJ])
-			if(i==8 && P(8,9,u) ~= 0)
-				display([8,9,u,P(8,9,u),Jk(9),tempJ])
+			if(i==4)
+				display([i,tempJ,u])
 			end
 			if(tempJ>Jk1(i))
 				Jk1(i) = tempJ;
 				u_opt_ind(i) = u;
-				%display(1)
 			end
 		end
 	end
-	if((Jk - Jk1) < 0.00001)
+	if((Jk - Jk1) == 0)%< 0.00001)
 		J_opt = Jk1;
 		is_done = 1;
 	end
