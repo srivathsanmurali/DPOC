@@ -59,40 +59,46 @@ p_pc= 1/L; %probability of each control space
 p_pc_norm = 0;
 P = [];
 target = targetCell(2) + ((targetCell(1)-1)*M);
-MoveMatrix = getMoveMatrix();
+Walls = getWalls()
+MoveMatrix = getMoveMatrix()
+% Move matrix
+%     - 1 when allowed to move to the node
+%     - 0 when not allowed
+
 % display(MoveMatrix(9,:),'MM(9,:)')
 P = zeros(MN,MN,L);
-% Need to add the changes caused due to walls.
-for i=1:MN
-    [controlSpaceNew,p_pc] = getPossibleMoves(i);
-    if(i==9)
-        display(controlSpaceNew)
-    end
-    for l=1:L
-        if(controlSpaceNew(l) == 0)
-            continue;
-        end
-        
-        for s=1:S
-            % control movement % disturbance movement
-            x_c = controlSpace(l,1) + disturbanceSpace(s,1);
-            y_c = controlSpace(l,2) + disturbanceSpace(s,2);
-            uw = y_c + (x_c*M);
-            %dynamics of the system
-            x = i + uw;
-            if( x<=MN && x>=1 && MoveMatrix(i,x) == 0)
 
-                P(i,x,l) = P(i,x,l) + p_pc*disturbanceSpace(s,3);
-                if(i==9 && x==19)
-                    display([i,x,l,P(i,x,l)])
-                end
-            end
+% % Need to add the changes caused due to walls.
+% for i=1:MN
+%     [controlSpaceNew,p_pc] = getPossibleMoves(i);
+%     if(i==9)
+%         display(controlSpaceNew)
+%     end
+%     for l=1:L
+%         if(controlSpaceNew(l) == 0)
+%             continue;
+%         end
+        
+%         for s=1:S
+%             % control movement % disturbance movement
+%             x_c = controlSpace(l,1) + disturbanceSpace(s,1);
+%             y_c = controlSpace(l,2) + disturbanceSpace(s,2);
+%             uw = y_c + (x_c*M);
+%             %dynamics of the system
+%             x = i + uw;
+%             if( x<=MN && x>=1 && MoveMatrix(i,x) == 0)
+
+%                 P(i,x,l) = P(i,x,l) + p_pc*disturbanceSpace(s,3);
+%                 if(i==9 && x==19)
+%                     display([i,x,l,P(i,x,l)])
+%                 end
+%             end
             
-        end
-    end
-end
-P(target,:,:) = 0;
-P(target,target,:) = 1;
+%         end
+%     end
+% end
+% P(target,:,:) = 0;
+% P(target,target,:) = 1;
 %% Get Possible Moves
     function [L_new,p_pc] = getPossibleMoves(i)
         L_new = zeros(L,1);
@@ -149,14 +155,32 @@ P(target,target,:) = 1;
 
     function [MM] = getMoveMatrix()
         MM = zeros(MN,MN);
+        for i = 1:MN
+            for u= 1:L
+                x_c = controlSpace(u,1);
+                y_c = controlSpace(u,2);
+                u = y_c + (x_c*M);
+                x = i + u;
+                if(x>=1 && x<=MN && Walls(i,x) == 1)
+                    MM(i,x) = 1;
+                end
+            end
+        end
+    end
+
+
+
+
+    function [Walls] = getWalls()
+        Walls = ones(MN,MN);
         %borders
         bdrs = [1];%,M+1,-M+1]
         for i=M:M:MN
             for j=1:length(bdrs)
                 x = i + bdrs(j);
                 if(x>=1 && x<=MN)
-                    MM(i,x) = 1;
-                    MM(i-1,x) = 1;
+                    Walls(i,x) = 0;
+                    Walls(i-1,x) = 0;
                 end
 
             end
@@ -165,8 +189,8 @@ P(target,target,:) = 1;
             for j=1:length(bdrs)
                 x = i - bdrs(j);
                 if(x>=1 && x<=MN)
-                    MM(i,x) = 1;
-                    MM(i+1,x) = 1;
+                    Walls(i,x) = 0;
+                    Walls(i+1,x) = 0;
                 end
             end
         end
@@ -182,8 +206,8 @@ P(target,target,:) = 1;
                 to      = max(to_y,from_y) + ((from_x)*M);
                 while (to<=MN)
                     while (from>=1)
-                        MM(from,to) = 1;
-                        MM(to,from) = 1;
+                        Walls(from,to) = 0;
+                        Walls(to,from) = 0;
                         from = from - M;
                     end
                     from    = max(to_y,from_y) + ((from_x-1)*M);
@@ -197,8 +221,8 @@ P(target,target,:) = 1;
                 from_stop = ( floor(from/M) * M) + 1;
                 while (to<=to_stop)
                     while (from>=from_stop)
-                        MM(from,to) = 1;
-                        MM(to,from) = 1;
+                        Walls(from,to) = 0;
+                        Walls(to,from) = 0;
                         from = from - 1;
                     end
                     from    = (from_y)  + (min(to_x,from_x)*M);
