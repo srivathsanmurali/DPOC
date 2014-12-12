@@ -104,14 +104,30 @@ for i=1:MN
         	got_hole = find(Holes == x);
         	if(~isempty(got_hole))
         		G(i,l) = -c_r*30;
-        	end
-        	if(x == target)        		
+        	elseif(x == target)        		
         		G(i,l) = 10000000;
-        	end
+            end
         end
     end
 end
 G(target,:) = 0;
+
+
+%% Iswalled
+    function [walled] = isWalled(i)
+        walled = 0;
+        sides = [1,-1,M,-M];
+        for s=1:4
+            x = i + sides(s);
+            if(x<1 || x>MN)
+                walled = 1;
+            else
+                if(Walls(i,x) == 1)
+                    walled = 1;
+                end
+            end
+        end
+    end
 
 %% Get Possible Moves
     function [L_new] = getPossibleMoves(i)
