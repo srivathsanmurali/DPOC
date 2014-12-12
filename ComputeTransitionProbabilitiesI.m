@@ -55,7 +55,7 @@ M   = mazeSize(1); %Vertical
 N   = mazeSize(2); %Horizontal
 S   = size(disturbanceSpace,1);
 L   = size(controlSpace,1);
-p_pc= 1/L; %probability of each control space
+p_pc= 1/L* 10; %probability of each control space
 p_pc_norm = 0;
 P = [];
 target = targetCell(2) + ((targetCell(1)-1)*M);
@@ -73,7 +73,7 @@ P = zeros(MN,MN,L);
 
 % Need to add the changes caused due to walls.
 for i=1:MN
-    [controlSpaceNew,p_pc] = getPossibleMoves(i);
+    [controlSpaceNew,p_pc1] = getPossibleMoves(i);
     % Possible Moves
     %     1 - If allowed
     %     0 - Not allowed
@@ -92,7 +92,7 @@ for i=1:MN
                 display([i,x,u,MoveMatrix(i,x)],'here1');
             end
 
-            P(i,x,l) = P(i,x,l) + p_pc;
+            P(i,x,l) = P(i,x,l) + p_pc1(l);
             for s=1:S
                 x_d = disturbanceSpace(s,1);
                 y_d = disturbanceSpace(s,2);
@@ -110,8 +110,9 @@ end
 P(target,:,:) = 0;
 P(target,target,:) = 1;
 %% Get Possible Moves
-    function [L_new,p_pc] = getPossibleMoves(i)
+    function [L_new,p_pc_m] = getPossibleMoves(i)
         L_new = zeros(L,1);
+        p_pc_m = zeros(L,1);
         x = i/M;
         y = mod(i,M);
         
@@ -120,6 +121,10 @@ P(target,target,:) = 1;
             x = i + u;
             if(x<=MN && x>=1 && MoveMatrix(i,x) == 1)            
                 L_new(ll) = 1;
+                p_pc_m(ll) = p_pc_m(ll) + p_pc;
+            else
+                p_pc_m(ll) = 0;
+                p_pc_m(7) = p_pc_m(ll) +  p_pc;
             end
         end
         p_pc = (1/length(find(L_new==1)));
