@@ -63,7 +63,7 @@ M   = mazeSize(1); %Vertical
 N   = mazeSize(2); %Horizontal
 S   = size(disturbanceSpace,1);
 L   = size(controlSpace,1);
-p_pc= 1/L*10; %probability of each control space
+p_pc= 1/L; %probability of each control space
 p_pc_norm = 0;
 P = [];
 target 		= targetCell(2) + ((targetCell(1)-1)*M);
@@ -99,9 +99,11 @@ for i=1:MN
         %dynamics of the system
         x = i + u;
         if(x<=MN && x>= 1 && MoveMatrix(i,x) == 1)
+
         	got_hole = find(Holes == x);
-        	if(got_hole == 0)
+        	if(isempty(got_hole))
 	            P(i,x,l) = p_pc1(l);
+	            
 	            for s=1:S
 	                x_d = disturbanceSpace(s,1);
 	                y_d = disturbanceSpace(s,2);
@@ -109,16 +111,16 @@ for i=1:MN
 	                xd = x+d;
 	                if(xd <= MN && xd >= 1 && MoveMatrix(x,xd) == 1)
 	                    got_hole = find(Holes == xd);
-	                    if(got_hole == 0)
-	                    	P(i,xd,l) = P(i,xd,l) * disturbanceSpace(s,3);
+	                    if(isempty(got_hole))
+	                    	P(i,xd,l) = p_pc1(l) * disturbanceSpace(s,3);
 	                    else
-	                    	P(i,xs)
+	                    	P(i,rst,l) = p_pc1(l) * disturbanceSpace(s,3);
+	                    end
 	                end
 	            end
 	        else
 	        	P(i,x,l) = 0;
 	        	P(i,rst,l) = p_pc1(l);
-	        	% P(i,rst,l) = P(i,rst,l) + p_pc1(l);
 	        end
         end 
     end

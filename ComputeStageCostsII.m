@@ -87,7 +87,7 @@ MoveMatrix = getMoveMatrix();
 %     - 0 when not allowed
 
 controlCost = sum(abs(controlSpace),2);
-G = ones(MN,L) * -10;
+G = zeros(MN,L);
 % Need to add the changes caused due to walls.
 for i=1:MN
     [controlSpaceNew] = getPossibleMoves(i);
@@ -102,11 +102,11 @@ for i=1:MN
             G(i,l) = 10 * (c~=0);
         	x = i + c;
         	got_hole = find(Holes == x);
-        	if(got_hole ~= 0)
-        		G(i,l) = -c_r;
+        	if(~isempty(got_hole))
+        		G(i,l) = -c_r*30;
         	end
         	if(x == target)        		
-        		G(i,l) = 100;
+        		G(i,l) = 1000;
         	end
         end
     end
