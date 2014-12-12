@@ -45,7 +45,7 @@ while done == 0
 	% Main loop 
 	% 	- ends when there is no change in the u_opt_ind;
 	
-	done = 1;
+	done = 0;
 	% Left to one if no change occurs
 
 	J_opt = getCost(u_opt_ind);
