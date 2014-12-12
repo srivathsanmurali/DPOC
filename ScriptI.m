@@ -38,7 +38,7 @@ else
     load('44Maze.mat');
     % In order to save time we can just load a pre-generated maze.
 end
-PlotMaze( 1, mazeSize, walls, targetCell, [], [] );
+% PlotMaze( 1, mazeSize, walls, targetCell, [], [] );
 
 %% load control and disturbance space
 load( 'controlSpace.mat' );
@@ -87,7 +87,7 @@ G = ComputeStageCostsI( stateSpace, controlSpace, disturbanceSpace, ...
 % 
 % %% solve stochastic shortest path problem
  [ J_opt_vi, u_opt_ind_vi ] = ValueIteration( P, G );
-% [ J_opt_pi, u_opt_ind_pi ] = PolicyIteration( P, G );
+[ J_opt_pi, u_opt_ind_pi ] = PolicyIteration( P, G );
 % [ J_opt_lp, u_opt_ind_lp ] = LinearProgramming( P, G );
 % % Here we solve the stochastic shortest path problem by Value Iteration,
 % % Policy Iteration, and Linear Programming.
@@ -99,10 +99,10 @@ figH = PlotMaze( 2, mazeSize, walls, targetCell, [], [], stateSpace, ...
 figure(figH);
 title(strcat('Value iteration (width=', num2str(mazeSize(1)), ', height=', num2str(mazeSize(2)), ')'));
 % 
-% figH = PlotMaze( 3, mazeSize, walls, targetCell, [], [], stateSpace, ...
-%     controlSpace, J_opt_pi, u_opt_ind_pi );
-% figure(figH);
-% title(strcat('Policy iteration (width=', num2str(mazeSize(1)), ', height=', num2str(mazeSize(2)), ')'));
+figH = PlotMaze( 3, mazeSize, walls, targetCell, [], [], stateSpace, ...
+    controlSpace, J_opt_pi, u_opt_ind_pi );
+figure(figH);
+title(strcat('Policy iteration (width=', num2str(mazeSize(1)), ', height=', num2str(mazeSize(2)), ')'));
 % 
 % figH = PlotMaze( 4, mazeSize, walls, targetCell, [], [], stateSpace, ...
 %     controlSpace, J_opt_lp, u_opt_ind_lp );

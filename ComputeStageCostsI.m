@@ -57,7 +57,7 @@ MN  = size(stateSpace, 1);
 M   = mazeSize(1); %Vertical
 N   = mazeSize(2); %Horizontal
 L   = size(controlSpace,1);
-target = targetCell(2) + ((targetCell(1)-1)*M)
+target = targetCell(2) + ((targetCell(1)-1)*M);
 
 Walls = getWalls();
 % Wall matrix
