@@ -63,7 +63,7 @@ while (is_done == 0)
 			end
 		end
 	end
-	if((Jk - Jk1) < 0.000001)
+	if((Jk - Jk1) ==0)
 		J_opt = Jk1;
 		is_done = 1;
 	end

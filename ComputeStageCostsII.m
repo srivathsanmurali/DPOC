@@ -106,7 +106,7 @@ for i=1:MN
         		G(i,l) = -c_r*30;
         	end
         	if(x == target)        		
-        		G(i,l) = 1000;
+        		G(i,l) = 10000000;
         	end
         end
     end

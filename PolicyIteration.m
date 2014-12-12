@@ -89,6 +89,9 @@ end
 if(~quiet)
 	display(PI_iter,'Total number of PI_iter');
 end
+% mx = max(J_opt);
+% mn = min(J_opt);
+% J_opt = (J_opt - mn) * (1000/(mx-mn));
 
 	function [J] = getCost(u_ind)
 		% getCost
