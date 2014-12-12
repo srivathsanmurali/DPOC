@@ -26,13 +26,16 @@ clc;
 
 %% define problem size and generate maze
 shouldGenerateMaze = false;
+shouldGenerateMaze = true;
 if shouldGenerateMaze
-	mazeSize = [ 10, 10 ];
+    s = 10
+	mazeSize = [ s, s ];
 	[ walls, targetCell, ~, ~ ] = GenerateMaze( mazeSize( 1 ), ...
         mazeSize( 2 ), false );
     % This generates a new random maze.
 else
     load( 'pregeneratedMazeI.mat' );
+    % load('44Maze.mat')
     % In order to save time we can just load a pre-generated maze.
 end
 % PlotMaze( 1, mazeSize, walls, targetCell, [], [] );

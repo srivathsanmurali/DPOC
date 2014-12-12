@@ -88,10 +88,6 @@ for i=1:MN
         %dynamics of the system
         x = i + u;
         if(x<=MN && x>= 1 && MoveMatrix(i,x) == 1)
-            if(i == 12 && x == 14)
-                display([i,x,u,MoveMatrix(i,x)],'here1');
-            end
-
             P(i,x,l) = p_pc1(l);
             for s=1:S
                 x_d = disturbanceSpace(s,1);
