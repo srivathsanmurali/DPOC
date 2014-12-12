@@ -62,7 +62,7 @@ load( 'disturbanceSpace.mat' );
 stateSpace = [];
 for i = 1 : mazeSize( 1 )
     for j = 1 : mazeSize( 2 )
-        index = ( i - 1 ) * mazeSize( 1 ) + j;
+        index = ( i - 1 ) * mazeSize( 2 ) + j;
         stateSpace( index, : ) = [ i, j ];
     end
 end

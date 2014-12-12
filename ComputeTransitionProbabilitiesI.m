@@ -101,7 +101,7 @@ for i=1:MN
                     P(i,(x+d)) = P(i,(x+d)) * disturbanceSpace(s,3);
                 end
             end
-        end
+        end 
     end
 end
 P(target,:,:) = 0;
