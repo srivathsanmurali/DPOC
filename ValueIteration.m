@@ -45,6 +45,7 @@ is_done = 0;
 iter = 0;
 while (is_done == 0)
 	iter = iter + 1;
+	display(iter, 'VI iternations');
 	u_old = u_opt_ind;
 	for i=1:MN
 		tempJ = 0;

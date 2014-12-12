@@ -21,7 +21,7 @@
 
 %% clear workspace and command window
 clear all;
-%close all;
+%close al
 clc;
 
 %% define problem size and generate maze
@@ -33,9 +33,9 @@ if shouldGenerateMaze
         mazeSize( 2 ), false );
     % This generates a new random maze.
 else
-     % load( 'pregeneratedMazeI.mat' );
+     load( 'pregeneratedMazeI.mat' );
     %load( 'lastmatrix.mat' );
-    load('44Maze.mat');
+    % load('44Maze.mat');
     % In order to save time we can just load a pre-generated maze.
 end
 % PlotMaze( 1, mazeSize, walls, targetCell, [], [] );

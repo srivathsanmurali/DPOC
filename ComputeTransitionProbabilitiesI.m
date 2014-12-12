@@ -55,7 +55,7 @@ M   = mazeSize(1); %Vertical
 N   = mazeSize(2); %Horizontal
 S   = size(disturbanceSpace,1);
 L   = size(controlSpace,1);
-p_pc= 1/L* 10; %probability of each control space
+p_pc= 1/L*10; %probability of each control space
 p_pc_norm = 0;
 P = [];
 target = targetCell(2) + ((targetCell(1)-1)*M);
@@ -98,9 +98,6 @@ for i=1:MN
                 y_d = disturbanceSpace(s,2);
                 d = y_c + (x_c*M);
                 if((x+d) <= MN && (x+d) >= 1 && MoveMatrix(x,(x+d)) == 1)
-                    if((x+d) == 14 && x == 13)
-                        display([i,x,x+d,u,MoveMatrix(x,(x+d))],'here2');
-                    end
                     P(i,(x+d)) = P(i,(x+d)) * disturbanceSpace(s,3);
                 end
             end
@@ -109,25 +106,26 @@ for i=1:MN
 end
 P(target,:,:) = 0;
 P(target,target,:) = 1;
+
 %% Get Possible Moves
     function [L_new,p_pc_m] = getPossibleMoves(i)
         L_new = zeros(L,1);
         p_pc_m = zeros(L,1);
-        x = i/M;
-        y = mod(i,M);
         
         for ll=1:L
             u = controlSpace(ll,2) + (controlSpace(ll,1) * M);
             x = i + u;
             if(x<=MN && x>=1 && MoveMatrix(i,x) == 1)            
                 L_new(ll) = 1;
-                p_pc_m(ll) = p_pc_m(ll) + p_pc;
+                p_pc_m(ll) = p_pc;
             else
                 p_pc_m(ll) = 0;
-                p_pc_m(7) = p_pc_m(ll) +  p_pc;
-            end
+                % p_pc_m(7) = p_pc_m(ll) + p_pc;
+            end                
         end
-        p_pc = (1/length(find(L_new==1)));
+
+        % p = 1/length(find(L_new == 1));
+        % p_pc_m = p_pc_m  * p;
         
     end
 

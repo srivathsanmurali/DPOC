@@ -45,7 +45,7 @@ while done == 0
 	% Main loop 
 	% 	- ends when there is no change in the u_opt_ind;
 	
-	done = 1;
+	done = 0;
 	% Left to one if no change occurs
 
 	J_opt = getCost(u_opt_ind);
@@ -91,7 +91,7 @@ display(PI_iter,'Total number of PI_iter');
 		Jk = zeros(1,MN);
 		Jk1 = zeros(1,MN);
 
-		T = 10;
+		T = 100;
 		iter_done = 0;
 		t = 1;
 		while (~iter_done)
