@@ -3,8 +3,7 @@
 ## Working for part1
 
 Todo :
-+ clean code
++ clean code X
 + add lp solver
-+ work on tp II
-+ work cost II
-
++ work holes and reset X
++ work wall defections 
