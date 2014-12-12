@@ -21,7 +21,7 @@
 
 %% clear workspace and command window
 clear all;
-close all;
+% close all;
 clc;
 
 %% define problem size and generate maze
@@ -35,7 +35,7 @@ else
     load( 'pregeneratedMazeI.mat' );
     % In order to save time we can just load a pre-generated maze.
 end
-PlotMaze( 1, mazeSize, walls, targetCell, [], [] );
+% PlotMaze( 1, mazeSize, walls, targetCell, [], [] );
 
 %% load control and disturbance space
 load( 'controlSpace.mat' );

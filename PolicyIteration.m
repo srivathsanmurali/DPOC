@@ -41,6 +41,7 @@ done 	= 0;
 
 PI_iter = 0;
 max_iter = 1000;
+quiet = true;
 while done == 0
 	% Main loop 
 	% 	- ends when there is no change in the u_opt_ind;
@@ -67,7 +68,9 @@ while done == 0
 	end
 	if(u_ind == u_opt_ind)
 		done =1;
-		disp('Stopped because PI converged');
+		if(~quiet)
+			disp('Stopped because PI converged');
+		end
 	end
 	u_opt_ind = u_ind;
 
@@ -75,11 +78,17 @@ while done == 0
 	
 	if(PI_iter == max_iter)
 		done = 1;
-		disp('Stoped because too many iterations');
+		if(~quiet)
+			disp('Stoped because too many iterations');
+		end
 	end
-	display(PI_iter,'No of P iterations done');
+	if(~quiet)
+		display(PI_iter,'No of P iterations done');
+	end
 end
-display(PI_iter,'Total number of PI_iter');
+if(~quiet)
+	display(PI_iter,'Total number of PI_iter');
+end
 
 	function [J] = getCost(u_ind)
 		% getCost

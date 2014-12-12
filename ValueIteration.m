@@ -41,11 +41,13 @@ u_opt_ind = ones(1,MN);
 Jk = zeros(1,MN);
 Jk1 = zeros(1,MN);
 is_done = 0;
-
+quiet = true;
 iter = 0;
 while (is_done == 0)
 	iter = iter + 1;
-	display(iter, 'VI iternations');
+	if(~quiet)
+		display(iter, 'VI iternations');
+	end
 	u_old = u_opt_ind;
 	for i=1:MN
 		tempJ = 0;
@@ -55,9 +57,6 @@ while (is_done == 0)
 			for j=1:MN
 				tempJ = tempJ + P(i,j,u)*Jk(j);
 			end
-			% if(i==4)
-			% 	display([i,tempJ,u])
-			% end
 			if(tempJ>Jk1(i))
 				Jk1(i) = tempJ;
 				u_opt_ind(i) = u;
@@ -70,6 +69,8 @@ while (is_done == 0)
 	end
 	Jk = Jk1;
 end
-display(iter, 'total iterations for VI')
+if(~quiet)
+	display(iter, 'total iterations for VI')
+end
 end
 

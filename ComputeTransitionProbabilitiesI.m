@@ -92,13 +92,13 @@ for i=1:MN
                 display([i,x,u,MoveMatrix(i,x)],'here1');
             end
 
-            P(i,x,l) = P(i,x,l) + p_pc1(l);
+            P(i,x,l) = p_pc1(l);
             for s=1:S
                 x_d = disturbanceSpace(s,1);
                 y_d = disturbanceSpace(s,2);
                 d = y_c + (x_c*M);
                 if((x+d) <= MN && (x+d) >= 1 && MoveMatrix(x,(x+d)) == 1)
-                    P(i,(x+d)) = P(i,(x+d)) * disturbanceSpace(s,3);
+                    P(i,(x+d),l) = p_pc1(l) * disturbanceSpace(s,3);
                 end
             end
         end 
@@ -161,7 +161,7 @@ P(target,target,:) = 1;
                             if(Walls(i,n1)== 1 && Walls(i,n2) == 1 ...
                                 && Walls(x,n1) == 1 && Walls(x,n2) == 1)
 
-                                MM(i,x) = 1
+                                MM(i,x) = 1;
                             else
                                 MM(i,x) = 0;
                             end
