@@ -4,6 +4,6 @@
 
 Todo :
 + clean code X
-+ add lp solver
++ add lp solver X
 + work holes and reset X
 + work wall defections 

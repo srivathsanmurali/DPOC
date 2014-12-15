@@ -26,7 +26,7 @@ clc;
 
 %% define problem size and generate maze
 shouldGenerateMaze = false;
-shouldGenerateMaze = true;
+% shouldGenerateMaze = true;
 if shouldGenerateMaze
     s = 10
 	mazeSize = [ s, s ];
@@ -86,27 +86,27 @@ G = ComputeStageCostsI( stateSpace, controlSpace, disturbanceSpace, ...
 % cost can be set to infinity.
 
 %% solve stochastic shortest path problem
-[ J_opt_vi, u_opt_ind_vi ] = ValueIteration( P, G );
-[ J_opt_pi, u_opt_ind_pi ] = PolicyIteration( P, G );
-% [ J_opt_lp, u_opt_ind_lp ] = LinearProgramming( P, G );
+% [ J_opt_vi, u_opt_ind_vi ] = ValueIteration( P, G );
+% [ J_opt_pi, u_opt_ind_pi ] = PolicyIteration( P, G );
+[ J_opt_lp, u_opt_ind_lp ] = LinearProgramming( P, G );
 % Here we solve the stochastic shortest path problem by Value Iteration,
 % Policy Iteration, and Linear Programming.
 
 %% plot results
-figH = PlotMaze( 2, mazeSize, walls, targetCell, [], [], stateSpace, ...
-    controlSpace, J_opt_vi, u_opt_ind_vi );
-figure(figH);
-title(strcat('Value iteration (width=', num2str(mazeSize(1)), ', height=', num2str(mazeSize(2)), ')'));
-
-figH = PlotMaze( 3, mazeSize, walls, targetCell, [], [], stateSpace, ...
-    controlSpace, J_opt_pi, u_opt_ind_pi );
-figure(figH);
-title(strcat('Policy iteration (width=', num2str(mazeSize(1)), ', height=', num2str(mazeSize(2)), ')'));
-
-% figH = PlotMaze( 4, mazeSize, walls, targetCell, [], [], stateSpace, ...
-%     controlSpace, J_opt_lp, u_opt_ind_lp );
+% figH = PlotMaze( 2, mazeSize, walls, targetCell, [], [], stateSpace, ...
+%     controlSpace, J_opt_vi, u_opt_ind_vi );
 % figure(figH);
-% title(strcat('Linear programming (width=', num2str(mazeSize(1)), ', height=', num2str(mazeSize(2)), ')'));
+% title(strcat('Value iteration (width=', num2str(mazeSize(1)), ', height=', num2str(mazeSize(2)), ')'));
+
+% figH = PlotMaze( 3, mazeSize, walls, targetCell, [], [], stateSpace, ...
+%     controlSpace, J_opt_pi, u_opt_ind_pi );
+% figure(figH);
+% title(strcat('Policy iteration (width=', num2str(mazeSize(1)), ', height=', num2str(mazeSize(2)), ')'));
+
+figH = PlotMaze( 4, mazeSize, walls, targetCell, [], [], stateSpace, ...
+    controlSpace, J_opt_lp, u_opt_ind_lp );
+figure(figH);
+title(strcat('Linear programming (width=', num2str(mazeSize(1)), ', height=', num2str(mazeSize(2)), ')'));
 
 % This plots the results for all three algorithms.
 

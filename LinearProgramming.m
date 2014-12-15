@@ -32,5 +32,46 @@ function [ J_opt, u_opt_ind ] = LinearProgramming( P, G )
 
 % put your code here
 
+MN = size(G,1);
+L  = size(G,2);
+
+u_opt_ind 	= ones(1,MN);
+J_opt 		= zeros(1,MN);
+
+A = zeros(MN*L,MN);
+B = zeros(MN*L,1);
+
+for i=1:MN
+	for u=1:L
+		for j=1:MN
+			a = ((i-1) * MN) + u;	
+			if(i~=j)
+				A(a,j) = P(i,j,u);
+			else
+				A(a,j) = P(i,j,u) - 1;
+			end
+			B(a) = G(i,u);
+		end
+	end
+end
+
+f = ones(MN,1) * -1;
+lb = zeros(MN,1);
+J_opt = linprog(f,A,B,[],[],lb);
+
+
+J_opt = J_opt';
+
+for i=1:MN
+	QBest = 0;
+	for u=1:L
+		Qsa = G(i,u) + P(i,:,u)*J_opt';
+		if(Qsa > QBest)
+			u_opt_ind(i) = u;
+			QBest = Qsa;
+		end
+	end
+end
+
 end
 
