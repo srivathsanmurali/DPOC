@@ -97,7 +97,7 @@ for i=1:MN
         c = y_c + (x_c * M);
         
         if(controlSpaceNew(l) == 0)
-            G(i,l) = -c_p;
+            G(i,l) = 0;
         else
             G(i,l) = 10 * (c~=0);
         	x = i + c;
@@ -107,6 +107,9 @@ for i=1:MN
         	elseif(x == target)        		
         		G(i,l) = 10000000;
             end
+            if(isWalled(x))
+                G(i,l) = G(i,l) - c_p;
+            end
         end
     end
 end
@@ -115,15 +118,15 @@ G(target,:) = 0;
 
 %% Iswalled
     function [walled] = isWalled(i)
-        walled = 0;
+        walled = false;
         sides = [1,-1,M,-M];
         for s=1:4
             x = i + sides(s);
             if(x<1 || x>MN)
-                walled = 1;
+                walled = true;
             else
                 if(Walls(i,x) == 1)
-                    walled = 1;
+                    walled = true;
                 end
             end
         end
