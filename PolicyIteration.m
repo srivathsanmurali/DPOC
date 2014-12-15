@@ -41,7 +41,7 @@ done 	= 0;
 
 PI_iter = 0;
 max_iter = 1000;
-quiet = true;
+quiet = false;
 while done == 0
 	% Main loop 
 	% 	- ends when there is no change in the u_opt_ind;

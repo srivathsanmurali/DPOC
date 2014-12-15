@@ -41,7 +41,7 @@ u_opt_ind = ones(1,MN);
 Jk = zeros(1,MN);
 Jk1 = zeros(1,MN);
 is_done = 0;
-quiet = true;
+quiet = false;
 iter = 0;
 while (is_done == 0)
 	iter = iter + 1;
@@ -63,7 +63,7 @@ while (is_done == 0)
 			end
 		end
 	end
-	if((Jk - Jk1) ==0)
+	if((Jk - Jk1) == 0)
 		J_opt = Jk1;
 		is_done = 1;
 	end

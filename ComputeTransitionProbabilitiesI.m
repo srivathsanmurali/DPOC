@@ -226,9 +226,6 @@ P(target,target,:) = 1;
                 from_stop = ( floor(from/M) * M) + 1;
                 while (to<=to_stop)
                     while (from>=from_stop)
-                        if((from==12 && to == 14) || (from == 14 && to == 12))
-                            display('here is your problem');
-                        end
                         Walls(from,to) = 0;
                         Walls(to,from) = 0;
                         from = from - 1;
